@@ -25,7 +25,7 @@ class _QuickSplashScreenState extends State<QuickSplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color logoBgColor = Color(0xFF133626); // Verde escuro IFCE
+    const Color logoBgColor = Color(0xFF133626);
 
     return Scaffold(
       backgroundColor: logoBgColor,
@@ -39,7 +39,7 @@ class _QuickSplashScreenState extends State<QuickSplashScreen> {
             fit: BoxFit.contain,
           )
               .animate() // <-- Começa a mágica aqui
-              .fade(duration: 800.ms) // Aparece suavemente em quase 1 segundo
+              .fade(duration: 800.ms) 
               .scale(
                 begin: const Offset(0.8, 0.8), // Começa com 80% do tamanho
                 end: const Offset(1.0, 1.0),   // Termina no tamanho normal

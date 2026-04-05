@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:segurese/preferences.dart';
 import 'package:segurese/screens/onboarding/onboarding_screen.dart';
 import 'package:segurese/screens/quick_splash.dart';
@@ -7,6 +8,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Inicializa o SharedPreferences antes de rodar o app
   await UserPreferences.init();
+   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
 

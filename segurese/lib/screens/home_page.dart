@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart'; 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'formulario_denuncia.dart'; // Adicione isso no topo do seu main.dart
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -81,20 +82,20 @@ class _HomePageState extends State<HomePage> {
 
                   const SizedBox(height: 32),
 
-                  //carrossel
+                  // carrosel com carousel_slider
                   Expanded(
                     child: CarouselSlider.builder(
                       carouselController: _carouselController,
                       itemCount: _tiposDenuncia.length,
                       itemBuilder: (context, index, realIndex) {
-                        return _buildCarouselCard(_tiposDenuncia[index], index);
+                        return _buildTipoDenunciaCard(_tiposDenuncia[index], index);
                       },
                       options: CarouselOptions(
-                        height: 500, 
-                        viewportFraction: 0.8, 
-                        enlargeCenterPage: true, 
-                        enlargeStrategy: CenterPageEnlargeStrategy.scale, 
-                        enableInfiniteScroll: true, 
+                        height: 500,
+                        viewportFraction: 0.8,
+                        enlargeCenterPage: true,
+                        enlargeStrategy: CenterPageEnlargeStrategy.scale,
+                        enableInfiniteScroll: true,
                         scrollPhysics: const BouncingScrollPhysics(),
                       ),
                     ),
@@ -174,12 +175,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // card do Carrossel
-  Widget _buildCarouselCard(String title, int index) {
+  // card do carrossel
+  Widget _buildTipoDenunciaCard(String title, int index) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xFF2B5C45), 
+        color: const Color(0xFF2B5C45),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -207,38 +208,38 @@ class _HomePageState extends State<HomePage> {
             bottom: 24,
             left: 32,
             right: 32,
-            child: _buildAppleGlassButton(),
+            child: _buildDenunciaButton(title),
           ),
         ],
       ),
     );
   }
 
-  // botao de denuncia 
-  Widget _buildAppleGlassButton() {
+  // botão de denúncia para o card
+  Widget _buildDenunciaButton(String tituloCard) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12), 
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 10,
-            offset: const Offset(0, 4), 
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: ClipRRect( 
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
-        child: BackdropFilter( 
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18), 
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
             height: 55,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08), 
+              color: Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3), 
-                width: 0.8, 
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 0.8,
               ),
             ),
             child: Material(
@@ -246,7 +247,15 @@ class _HomePageState extends State<HomePage> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(30),
                 onTap: () {
-                  // Futuro: Navegar para a tela de denúncia
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FormularioDenuncia(
+                        categoria: tituloCard,
+                        emailDestino: 'larayslengb@gmail.com',
+                      ),
+                    ),
+                  );
                 },
                 child: const Center(
                   child: Text(

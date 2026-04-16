@@ -21,6 +21,10 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _descricaoController;
   late TextEditingController _nomeController;
+  late TextEditingController _dataController;
+  late TextEditingController _horaController;
+  DateTime? _dataSelecionada;
+  TimeOfDay? _horaSelecionada;
   final List<String> _caminhosDasFotos = [];
   final ImagePicker _picker = ImagePicker();
 
@@ -29,12 +33,16 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     super.initState();
     _descricaoController = TextEditingController();
     _nomeController = TextEditingController();
+    _dataController = TextEditingController();
+    _horaController = TextEditingController();
   }
 
   @override
   void dispose() {
     _descricaoController.dispose();
     _nomeController.dispose();
+    _dataController.dispose();
+    _horaController.dispose();
     super.dispose();
   }
 
@@ -52,6 +60,36 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     if (foto != null) {
       setState(() {
         _caminhosDasFotos.add(foto.path);
+      });
+    }
+  }
+
+  Future<void> _selecionarData() async {
+    final DateTime now = DateTime.now();
+    final DateTime? data = await showDatePicker(
+      context: context,
+      initialDate: _dataSelecionada ?? now,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (data != null) {
+      setState(() {
+        _dataSelecionada = data;
+        _dataController.text = '${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}';
+      });
+    }
+  }
+
+  Future<void> _selecionarHora() async {
+    final TimeOfDay initialTime = _horaSelecionada ?? TimeOfDay.now();
+    final TimeOfDay? hora = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    if (hora != null) {
+      setState(() {
+        _horaSelecionada = hora;
+        _horaController.text = hora.format(context);
       });
     }
   }
@@ -189,7 +227,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
               
               const SizedBox(height: 16),
               
-              // Nome do denunciante
+              // Local do ocorrido
               TextFormField(
                 controller: _nomeController,
                 decoration: InputDecoration(
@@ -201,7 +239,53 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the location';
+                    return 'Por favor, informe o local do ocorrido';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+
+              // Data do ocorrido
+              TextFormField(
+                controller: _dataController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Data do ocorrido',
+                  hintText: 'Selecione a data',
+                  suffixIcon: const Icon(Icons.calendar_today),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onTap: _selecionarData,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, selecione a data';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+
+              // Hora do ocorrido
+              TextFormField(
+                controller: _horaController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Hora do ocorrido',
+                  hintText: 'Selecione a hora',
+                  suffixIcon: const Icon(Icons.access_time),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onTap: _selecionarHora,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, selecione a hora';
                   }
                   return null;
                 },
@@ -286,7 +370,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     }
 
     final Email email = Email(
-      body: 'Formulário de Denúncia\n\nCATEGORIA: ${widget.categoria}\nNOME: ${_nomeController.text}\n\nDESCRIÇÃO:\n${_descricaoController.text}\n\n---\nEnviado via Segurese App',
+      body: 'Formulário de Denúncia\n\nCATEGORIA: ${widget.categoria}\nLOCAL: ${_nomeController.text}\nDATA: ${_dataController.text}\nHORA: ${_horaController.text}\n\nDESCRIÇÃO:\n${_descricaoController.text}\n\n---\nEnviado via Segurese App',
       subject: 'Denúncia - ${widget.categoria}',
       recipients: ['larayslengb@gmail.com'],
       attachmentPaths: _caminhosDasFotos,

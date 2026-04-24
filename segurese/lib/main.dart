@@ -6,7 +6,7 @@ import 'package:segurese/screens/quick_splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inicializa o SharedPreferences antes de rodar o app
+
   await UserPreferences.init();
    WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -19,17 +19,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Lê se o onboarding já foi visto
+ 
     bool onboardingViewed = UserPreferences.isOnboardingViewed;
 
     return MaterialApp(
       title: 'Segurese',
       theme: ThemeData(
-        fontFamily: 'Montserrat', // Você pode adicionar sua própria fonte
+        fontFamily: 'Montserrat',
         primarySwatch: Colors.green,
         useMaterial3: true,
       ),
-      // Define a tela inicial condicionalmente
+      
       home: onboardingViewed ? const QuickSplashScreen() : const OnboardingScreen(),
     );
   }

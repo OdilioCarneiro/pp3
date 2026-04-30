@@ -14,7 +14,7 @@ class _QuickSplashScreenState extends State<QuickSplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navega para a HomePage após 2.5 segundos
+   
     Future.delayed(const Duration(milliseconds: 2500), () {
       Navigator.pushReplacement(
         context,

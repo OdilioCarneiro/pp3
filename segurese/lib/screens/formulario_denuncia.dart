@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http; 
+import 'package:path/path.dart' as path;
 
 class FormularioDenuncia extends StatefulWidget {
   final String categoria;
@@ -446,24 +448,86 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
 
 
   void _enviarDenuncia() async {
-    final Email email = Email(
-      body: 'Formulário de Denúncia\n\nCATEGORIA: ${widget.categoria}\nLOCAL: ${_nomeController.text}\nDATA: ${_dataController.text}\nHORA: ${_horaController.text}\n\nDESCRIÇÃO:\n${_descricaoController.text}',
-      subject: 'Denúncia - ${widget.categoria}',
-      recipients: ['larayslengb@gmail.com'], 
-      attachmentPaths: _caminhosDasFotos,
-      isHTML: false,
+
+    // Validar se o nome está preenchido
+    if (_nomeController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha o local do ocorrido'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validar se a descrição está preenchida
+    if (_descricaoController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha a descrição'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Enviando denúncia...'),
+        backgroundColor: Color(0xFF2B5C45),
+      ),
     );
 
     try {
-      await FlutterEmailSender.send(email);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Email aberto para envio!'),
-            backgroundColor: _verdeMedio,
-            behavior: SnackBarBehavior.floating,
-          ),
+      // Prepare multipart request
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://localhost:3000/submit-form'), // Change to your server URL
+      );
+
+      // Add form fields
+      request.fields['categoria'] = widget.categoria;
+      request.fields['local'] = _nomeController.text;
+      request.fields['data'] = _dataController.text;
+      request.fields['hora'] = _horaController.text;
+      request.fields['descricao'] = _descricaoController.text;
+      request.fields['emailDestino'] = widget.emailDestino;
+
+      // Add attachments
+      for (String photoPath in _caminhosDasFotos) {
+        var file = await http.MultipartFile.fromPath(
+          'attachments',
+          photoPath,
+          filename: path.basename(photoPath),
         );
+        request.files.add(file);
+      }
+
+      // Send request
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Denúncia enviada com sucesso!'),
+              backgroundColor: Color(0xFF2B5C45),
+            ),
+          );
+          // Optionally, navigate back or clear form
+          Navigator.of(context).pop();
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar: $responseBody'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (error) {
       if (mounted) {

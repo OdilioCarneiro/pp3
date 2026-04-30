@@ -16,10 +16,17 @@ class _HomePageState extends State<HomePage> {
   final CarouselSliderController _carouselController = CarouselSliderController();
   int _currentTabIndex = 0;
   
-
   int _selectedIndex = 0;
-
   late final List<InstituicaoModel> _instituicoes;
+
+  // 🔥 MAPA DE EMAILS POR CATEGORIA
+  final Map<String, String> _emailMapping = {
+    'Perigos': 'yslennlaragb@gmail.com',
+    'Acidentes': 'saude@ifce.com',
+    'Assédio': 'recursos_humanos@ifce.com',
+    'Racismo': 'diversidade@ifce.com',
+    'Homofobia': 'odilio.carneiro63@aluno.ifce.edu.br',
+  };
 
   @override
   void initState() {
@@ -27,20 +34,17 @@ class _HomePageState extends State<HomePage> {
     _instituicoes = InstituicaoModel.getDadosIfceFortaleza();
   }
 
-
   void _onChipTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
     
-  
     _carouselController.animateToPage(
       index,
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
 
-   
     _showBioFullScreen(context, _instituicoes[index]);
   }
 
@@ -102,13 +106,11 @@ class _HomePageState extends State<HomePage> {
                       enlargeStrategy: CenterPageEnlargeStrategy.scale,
                       enableInfiniteScroll: true,
                       scrollPhysics: const BouncingScrollPhysics(),
-
                     ),
                   ),
                 ],
               ),
             ),
-
 
             Positioned(
               bottom: 30,
@@ -121,7 +123,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   Widget _buildInstitutionChip(InstituicaoModel data, int index) {
     bool isActive = _selectedIndex == index;
@@ -215,6 +216,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildGlassButton(String label, String categoria) {
+    // 🔥 PEGA EMAIL CORRETO DA CATEGORIA
+    final String emailDestino = _emailMapping[categoria] ?? 'default@ifce.com';
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
@@ -250,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => FormularioDenuncia(
                         categoria: categoria,
-                        emailDestino: 'larayslengb@gmail.com',
+                        emailDestino: emailDestino, // 🔥 EMAIL CORRETO POR CATEGORIA
                       ),
                     ),
                   );
@@ -274,8 +278,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-  
   void _showBioFullScreen(BuildContext context, InstituicaoModel data) {
     showModalBottomSheet(
       context: context,
@@ -442,8 +444,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-  
   Widget _buildAppleGlassTabBar() {
     return Container(
       decoration: BoxDecoration(

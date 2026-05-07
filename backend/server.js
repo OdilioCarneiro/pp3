@@ -28,20 +28,20 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-const emailUser = process.env.EMAIL_USER || 'ppprojeto3@gmail.com';
-const emailPass = process.env.EMAIL_PASS || 'khxfsmyesrjbobvr';
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const fromEmail = process.env.FROM_EMAIL || 'noreply@segurese.com.br';
 
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.warn('WARNING: EMAIL_USER and/or EMAIL_PASS are not set. Set them as environment variables for production.');
+if (!sendgridApiKey) {
+  console.warn('WARNING: SENDGRID_API_KEY is not set. Email sending will fail.');
 }
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: 'smtp.sendgrid.net',
   port: 587,
   secure: false,
   auth: {
-    user: emailUser,
-    pass: emailPass
+    user: 'apikey',
+    pass: sendgridApiKey
   },
   connectionTimeout: 5000,
   socketTimeout: 5000
@@ -103,7 +103,7 @@ app.post('/submit-form', upload.array('attachments'), (req, res) => {
 
   // Send email
   const mailOptions = {
-    from: emailUser,
+    from: fromEmail,
     to: recipientEmail,
     subject: `Denúncia - ${categoria}`,
     text: emailBody,

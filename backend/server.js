@@ -47,7 +47,11 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error('Transporter verification failed:', error);
+    console.error('Transporter verification failed:');
+    console.error('  message:', error.message);
+    console.error('  code:', error.code);
+    console.error('  response:', error.response);
+    console.error('  stack:', error.stack);
   } else {
     console.log('Email transporter ready to send messages');
   }
@@ -106,11 +110,24 @@ app.post('/submit-form', upload.array('attachments'), (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending email:');
+      console.error('  message:', error.message);
+      console.error('  code:', error.code);
+      console.error('  response:', error.response);
+      console.error('  stack:', error.stack);
+      if (error.response && typeof error.response === 'object') {
+        try {
+          console.error('  response text:', JSON.stringify(error.response));
+        } catch (jsonErr) {
+          console.error('  response text (raw):', error.response);
+        }
+      }
       return res.status(500).json({
         success: false,
         message: 'Erro ao enviar email',
-        detail: error.message
+        detail: error.message,
+        code: error.code,
+        response: error.response
       });
     }
     console.log('Email sent:', info.response);

@@ -28,23 +28,24 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-const fromEmail = process.env.FROM_EMAIL || 'noreply@segurese.com.br';
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
+const fromEmail = process.env.FROM_EMAIL || emailUser;
 
-if (!sendgridApiKey) {
-  console.warn('WARNING: SENDGRID_API_KEY is not set. Email sending will fail.');
+if (!emailUser || !emailPass) {
+  console.warn('WARNING: EMAIL_USER or EMAIL_PASS is not set. Email sending will fail.');
 }
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
+  host: 'smtp.gmail.com',
   port: 587,
   secure: false,
   auth: {
-    user: 'apikey',
-    pass: sendgridApiKey
+    user: emailUser,
+    pass: emailPass
   },
-  connectionTimeout: 5000,
-  socketTimeout: 5000
+  connectionTimeout: 10000,
+  socketTimeout: 10000
 });
 
 transporter.verify((error, success) => {

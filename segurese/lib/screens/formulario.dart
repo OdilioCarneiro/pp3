@@ -183,7 +183,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
   Widget _buildPhotoGallery() {
     return Container(
       height: 100,
-      margin: const EdgeInsets.bottom(16),
+      margin: const EdgeInsets.all(16),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: _caminhosDasFotos.length,

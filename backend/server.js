@@ -28,11 +28,11 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const fromEmail = 'ppprojeto3@gmail.com'; // O e-mail que você verificou agora!
 
 const departmentEmails = {
-  'Perigos': 'yslennlaragb@gmail.com',
+  'Perigos': 'yslenlaragb@gmail.com',
   'Acidentes': 'saude@ifce.com',
   'Assédio': 'recursos_humanos@ifce.com',
   'Racismo': 'diversidade@ifce.com',
-  'Homofobia': 'odilio.carneiro63@aluno.ifce.edu.br',
+  'Homofobia': 'odiliocarneiro@gmail.com',
 };
 
 app.get('/', (req, res) => {

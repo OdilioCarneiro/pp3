@@ -21,11 +21,11 @@ class _HomePageState extends State<HomePage> {
 
   // 🔥 MAPA DE EMAILS POR CATEGORIA
   final Map<String, String> _emailMapping = {
-    'Perigos': 'yslennlaragb@gmail.com',
+    'Perigos': 'yslenlaragb@gmail.com',
     'Acidentes': 'saude@ifce.com',
     'Assédio': 'recursos_humanos@ifce.com',
     'Racismo': 'diversidade@ifce.com',
-    'Homofobia': 'odilio.carneiro63@aluno.ifce.edu.br',
+    'Homofobia': 'odiliocarneiro@gmail.com',
   };
 
   @override

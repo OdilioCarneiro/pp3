@@ -4,7 +4,7 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-// 1. IMPORTAR O SDK DO SENDGRID EM VEZ DO NODEMAILER
+// TROCA AQUI: Sai Nodemailer, entra SendGrid Mail
 const sgMail = require('@sendgrid/mail');
 
 const app = express();
@@ -14,31 +14,18 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configuração do Multer (mantida igual)
+// Configuração do Multer (Upload de arquivos)
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+  destination: (req, file, cb) => { cb(null, 'uploads/'); },
+  filename: (req, file, cb) => { cb(null, Date.now() + path.extname(file.originalname)); }
 });
 const upload = multer({ storage: storage });
 
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
-}
+if (!fs.existsSync('uploads')) { fs.mkdirSync('uploads'); }
 
-// 2. CONFIGURAR A CHAVE DA API
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-const fromEmail = process.env.FROM_EMAIL || 'noreply@segurese.com.br';
-
-if (sendgridApiKey) {
-    sgMail.setApiKey(sendgridApiKey);
-    console.log('SendGrid API configurada.');
-} else {
-    console.error('ERRO: SENDGRID_API_KEY não encontrada nas variáveis de ambiente.');
-}
+// CONFIGURAÇÃO DO SENDGRID
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const fromEmail = 'ppprojeto3@gmail.com'; // O e-mail que você verificou agora!
 
 const departmentEmails = {
   'Perigos': 'yslennlaragb@gmail.com',
@@ -49,24 +36,23 @@ const departmentEmails = {
 };
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Segurese Backend API is running' });
+  res.json({ status: 'ok', message: 'Segurese Backend rodando via SendGrid API' });
 });
 
 app.post('/submit-form', upload.array('attachments'), async (req, res) => {
   const { categoria, local, data, hora, descricao, emailDestino } = req.body;
   const attachments = req.files;
 
+  // Define para qual e-mail vai (baseado no card clicado)
   const recipientEmail = emailDestino || departmentEmails[categoria] || 'default@departamento.com';
 
-  let emailBody = `Formulário de Denúncia\n\n`;
-  emailBody += `CATEGORIA: ${categoria}\n`;
+  let emailBody = `Formulário de Denúncia\n\nCATEGORIA: ${categoria}\n`;
   if (local) emailBody += `LOCAL: ${local}\n`;
   if (data) emailBody += `DATA: ${data}\n`;
   if (hora) emailBody += `HORA: ${hora}\n`;
-  emailBody += `\nDESCRIÇÃO:\n${descricao}\n\n`;
-  emailBody += `---\nEnviado via Segurese App`;
+  emailBody += `\nDESCRIÇÃO:\n${descricao}\n\n---\nEnviado via Segurese App`;
 
-  // 3. PREPARAR ANEXOS PARA A API (PRECISA SER BASE64)
+  // Prepara anexos para a API (Converte para Base64)
   const emailAttachments = attachments ? attachments.map(file => ({
     content: fs.readFileSync(file.path).toString('base64'),
     filename: file.originalname,
@@ -74,10 +60,9 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
     disposition: 'attachment'
   })) : [];
 
-  // 4. MONTAR O OBJETO DA MENSAGEM PARA A API
   const msg = {
-    to: recipientEmail,
-    from: fromEmail, // PRECISA ESTAR VALIDADO NO DASHBOARD DO SENDGRID
+    to: recipientEmail,     // O destino (depende do card)
+    from: fromEmail,        // O seu e-mail verificado (ppprojeto3@gmail.com)
     subject: `Denúncia - ${categoria}`,
     text: emailBody,
     attachments: emailAttachments,
@@ -85,21 +70,14 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
 
   try {
     await sgMail.send(msg);
-    console.log('Email enviado com sucesso via API');
+    console.log('E-mail enviado com sucesso via API!');
     res.json({ success: true, message: 'Denúncia enviada com sucesso' });
   } catch (error) {
-    console.error('Erro ao enviar via SendGrid API:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Erro ao enviar email',
-      detail: error.message
-    });
+    console.error('Erro no SendGrid:', error.response ? error.response.body : error);
+    res.status(500).json({ success: false, message: 'Erro ao enviar email', detail: error.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-})
+  console.log(`Servidor rodando na porta ${PORT}`);
+});

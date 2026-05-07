@@ -481,10 +481,10 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
 
     try {
       // Prepare multipart request
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('http://localhost:3000/submit-form'), // Change to your server URL
-      );
+  var request = http.MultipartRequest(
+  'POST',
+  Uri.parse('https://segurese-backend.onrender.com/submit-form'),
+);
 
       // Add form fields
       request.fields['categoria'] = widget.categoria;

@@ -42,7 +42,9 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: emailUser,
     pass: emailPass
-  }
+  },
+  connectionTimeout: 5000,
+  socketTimeout: 5000
 });
 
 transporter.verify((error, success) => {

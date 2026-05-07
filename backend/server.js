@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
-const nodemailer = require('nodemailer');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+// 1. IMPORTAR O SDK DO SENDGRID EM VEZ DO NODEMAILER
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// Configuração do Multer (mantida igual)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -23,71 +25,39 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-const fs = require('fs');
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-const emailUser = process.env.EMAIL_USER;
-const emailPass = process.env.EMAIL_PASS;
-const fromEmail = process.env.FROM_EMAIL || emailUser;
+// 2. CONFIGURAR A CHAVE DA API
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const fromEmail = process.env.FROM_EMAIL || 'noreply@segurese.com.br';
 
-if (!emailUser || !emailPass) {
-  console.warn('WARNING: EMAIL_USER or EMAIL_PASS is not set. Email sending will fail.');
+if (sendgridApiKey) {
+    sgMail.setApiKey(sendgridApiKey);
+    console.log('SendGrid API configurada.');
+} else {
+    console.error('ERRO: SENDGRID_API_KEY não encontrada nas variáveis de ambiente.');
 }
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: emailUser,
-    pass: emailPass
-  },
-  connectionTimeout: 10000,
-  socketTimeout: 10000
-});
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('Transporter verification failed:');
-    console.error('  message:', error.message);
-    console.error('  code:', error.code);
-    console.error('  response:', error.response);
-    console.error('  stack:', error.stack);
-  } else {
-    console.log('Email transporter ready to send messages');
-  }
-});
-
-// Department email mapping
 const departmentEmails = {
   'Perigos': 'yslennlaragb@gmail.com',
   'Acidentes': 'saude@ifce.com',
   'Assédio': 'recursos_humanos@ifce.com',
   'Racismo': 'diversidade@ifce.com',
   'Homofobia': 'odilio.carneiro63@aluno.ifce.edu.br',
-  // Add more as needed
 };
 
-// Health check endpoint
 app.get('/', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    message: 'Segurese Backend API is running',
-    endpoints: ['/submit-form (POST)']
-  });
+  res.json({ status: 'ok', message: 'Segurese Backend API is running' });
 });
 
-// API endpoint to submit form
-app.post('/submit-form', upload.array('attachments'), (req, res) => {
+app.post('/submit-form', upload.array('attachments'), async (req, res) => {
   const { categoria, local, data, hora, descricao, emailDestino } = req.body;
   const attachments = req.files;
 
-  // Determine recipient email
   const recipientEmail = emailDestino || departmentEmails[categoria] || 'default@departamento.com';
 
-  // Prepare email content
   let emailBody = `Formulário de Denúncia\n\n`;
   emailBody += `CATEGORIA: ${categoria}\n`;
   if (local) emailBody += `LOCAL: ${local}\n`;
@@ -96,48 +66,40 @@ app.post('/submit-form', upload.array('attachments'), (req, res) => {
   emailBody += `\nDESCRIÇÃO:\n${descricao}\n\n`;
   emailBody += `---\nEnviado via Segurese App`;
 
-  // Prepare attachments
+  // 3. PREPARAR ANEXOS PARA A API (PRECISA SER BASE64)
   const emailAttachments = attachments ? attachments.map(file => ({
+    content: fs.readFileSync(file.path).toString('base64'),
     filename: file.originalname,
-    path: file.path
+    type: file.mimetype,
+    disposition: 'attachment'
   })) : [];
 
-  // Send email
-  const mailOptions = {
-    from: fromEmail,
+  // 4. MONTAR O OBJETO DA MENSAGEM PARA A API
+  const msg = {
     to: recipientEmail,
+    from: fromEmail, // PRECISA ESTAR VALIDADO NO DASHBOARD DO SENDGRID
     subject: `Denúncia - ${categoria}`,
     text: emailBody,
-    attachments: emailAttachments
+    attachments: emailAttachments,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:');
-      console.error('  message:', error.message);
-      console.error('  code:', error.code);
-      console.error('  response:', error.response);
-      console.error('  stack:', error.stack);
-      if (error.response && typeof error.response === 'object') {
-        try {
-          console.error('  response text:', JSON.stringify(error.response));
-        } catch (jsonErr) {
-          console.error('  response text (raw):', error.response);
-        }
-      }
-      return res.status(500).json({
-        success: false,
-        message: 'Erro ao enviar email',
-        detail: error.message,
-        code: error.code,
-        response: error.response
-      });
-    }
-    console.log('Email sent:', info.response);
+  try {
+    await sgMail.send(msg);
+    console.log('Email enviado com sucesso via API');
     res.json({ success: true, message: 'Denúncia enviada com sucesso' });
-  });
+  } catch (error) {
+    console.error('Erro ao enviar via SendGrid API:', error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    res.status(500).json({
+      success: false,
+      message: 'Erro ao enviar email',
+      detail: error.message
+    });
+  }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
+})

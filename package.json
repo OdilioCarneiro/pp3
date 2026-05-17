@@ -2,5 +2,8 @@
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
     "mongodb": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0"
   }
 }

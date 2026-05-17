@@ -46,14 +46,13 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
     }
   }
 
-  Future<void> _buscarDenunciasDoMongo() async {
+ Future<void> _buscarDenunciasDoMongo() async {
     setState(() => _isLoading = true);
 
     try {
-      // ⚠️ ATENÇÃO: Substitua "SEU_IP" pelo IP da sua máquina (ex: 192.168.1.10) 
-      // ou 10.0.2.2 se estiver usando o Emulador do Android.
-      // Quando for lançar o app, coloque a URL do seu servidor online (ex: Render, Railway).
-      final String apiUrl = 'http://SEU_IP:3000/minhas-denuncias/$_deviceId';
+      // Aqui nós colocamos o seu link do Render!
+      // Ele vai pegar a URL base e juntar com a rota e o ID do celular
+      final String apiUrl = 'https://pp3-8dg0.onrender.com/minhas-denuncias/$_deviceId';
       
       final response = await http.get(Uri.parse(apiUrl));
 

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const { MongoClient, ObjectId } = require('mongodb');
 const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
@@ -137,7 +138,74 @@ app.get('/minhas-denuncias/:dispositivoId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Erro ao buscar histórico' });
   }
 });
+// ==========================================
+// ROTAS DE ADMINISTRADOR
+// ==========================================
 
+// 1. Rota de Login Admin
+// O Flutter vai enviar a categoria e a senha digitada. O servidor confere se bate.
+app.post('/admin/login', (req, res) => {
+    const { categoria, senha } = req.body;
+
+    const senhasPorCategoria = {
+        'Assédio': 'assedio123',
+        'Preconceito': 'preconceito123',
+        'Racismo': 'racismo123',
+        'Perigos': 'perigos123',
+        'Acidentes': 'acidentes123'
+    };
+
+    const senhaCorreta = senhasPorCategoria[categoria];
+
+    // Se a categoria existe no dicionário e a senha digitada for igual à senha correta
+    if (senhaCorreta && senha === senhaCorreta) {
+        res.status(200).json({ mensagem: 'Login aprovado!', categoria });
+    } else {
+        res.status(401).json({ erro: 'Senha incorreta ou categoria inválida.' });
+    }
+});
+
+// 2. Rota para listar todas as denúncias de UMA categoria
+app.get('/admin/denuncias/:categoria', async (req, res) => {
+    try {
+        const { categoria } = req.params;
+        const collection = db.collection('denuncias'); // Substitua pelo nome da sua coleção se for diferente
+        
+        // Busca todas daquela categoria e ordena das mais novas para as mais antigas
+        const denuncias = await collection.find({ categoria }).sort({ _id: -1 }).toArray();
+        
+        res.status(200).json(denuncias);
+    } catch (erro) {
+        console.error('Erro ao buscar denúncias por categoria:', erro);
+        res.status(500).json({ erro: 'Erro interno ao buscar denúncias.' });
+    }
+});
+
+// 3. Rota para ATUALIZAR o status de uma denúncia
+app.patch('/admin/denuncias/:id/status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const collection = db.collection('denuncias');
+        
+        // O $set diz ao MongoDB para alterar APENAS o campo status e manter o resto intacto
+        const resultado = await collection.updateOne(
+            { _id: new ObjectId(id) }, 
+            { $set: { status: status } }
+        );
+
+        if (resultado.modifiedCount === 1) {
+            res.status(200).json({ mensagem: 'Status atualizado com sucesso!' });
+        } else {
+            // Se modifiedCount for 0, significa que não achou o ID ou o status já era o mesmo
+            res.status(404).json({ erro: 'Denúncia não encontrada ou status não alterado.' });
+        }
+    } catch (erro) {
+        console.error('Erro ao atualizar status:', erro);
+        res.status(500).json({ erro: 'Erro interno ao atualizar status.' });
+    }
+});
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

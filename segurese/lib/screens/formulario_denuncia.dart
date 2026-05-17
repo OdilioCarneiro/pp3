@@ -5,7 +5,8 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http; 
 import 'package:path/path.dart' as path;
-import 'package:device_info_plus/device_info_plus.dart'; // <-- NOVO: Pacote para pegar o ID do celular
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class FormularioDenuncia extends StatefulWidget {
   final String categoria;
@@ -55,20 +56,21 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
   }
 
   // --- NOVA FUNÇÃO: Pegar o ID único do dispositivo ---
-  Future<String> _getDeviceId() async {
-    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-    try {
-      if (Platform.isAndroid) {
-        var build = await deviceInfoPlugin.androidInfo;
-        return build.id; // ID único no Android
-      } else if (Platform.isIOS) {
-        var build = await deviceInfoPlugin.iosInfo;
-        return build.identifierForVendor ?? "iOS-Desconhecido"; // ID único no iOS
-      }
-    } catch (e) {
-      return "Erro-ID";
+ Future<String> _getDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Tenta buscar o ID que já está salvo no aparelho
+    String? deviceId = prefs.getString('meu_device_id_unico');
+
+    // Se for a primeira vez abrindo o app, a variável será nula
+    if (deviceId == null) {
+      // Gera um código único (Ex: 110e8400-e29b-41d4-a716-446655440000)
+      deviceId = const Uuid().v4(); 
+      // Salva na memória do celular para as próximas vezes
+      await prefs.setString('meu_device_id_unico', deviceId);
     }
-    return "Desconhecido";
+
+    return deviceId;
   }
 
   Future<void> _tirarFoto() async {

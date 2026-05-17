@@ -16,7 +16,7 @@ dependencies:
   http: ^1.2.0
   path: ^1.9.0
   path_provider: ^2.1.2
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.5
   intl: ^0.18.1
 
   # Interface e Animação
@@ -29,6 +29,7 @@ dependencies:
   # Mídia
   image_picker: ^1.0.7
   flutter_email_sender: ^6.0.3
+  uuid: ^4.5.3
 
 dev_dependencies:
   flutter_test:

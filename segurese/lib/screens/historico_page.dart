@@ -1,6 +1,7 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:segurese/models/denuncia_model.dart';
@@ -15,7 +16,6 @@ class HistoricoDenunciasPage extends StatefulWidget {
 }
 
 class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
-  final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
   String _deviceId = "Carregando...";
   bool _isLoading = true;
   List<DenunciaModel> _denuncias = [];
@@ -31,37 +31,40 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
     await _buscarDenunciasDoMongo();
   }
 
-  // Lógica profissional para obter o ID único em Android ou iOS
+  // NOVA LÓGICA: Gera e salva um ID único na memória do celular
   Future<void> _obterIdDispositivo() async {
     try {
-      if (Platform.isAndroid) {
-        var build = await _deviceInfoPlugin.androidInfo;
-        _deviceId = build.id; // ID único do Android
-      } else if (Platform.isIOS) {
-        var build = await _deviceInfoPlugin.iosInfo;
-        _deviceId = build.identifierForVendor ?? "iOS-Desconhecido";
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Tenta buscar o ID que já está salvo no aparelho
+      String? deviceId = prefs.getString('meu_device_id_unico');
+
+      // Se for a primeira vez abrindo o app, a variável será nula
+      if (deviceId == null) {
+        // Gera um código único
+        deviceId = const Uuid().v4(); 
+        // Salva na memória do celular para as próximas vezes
+        await prefs.setString('meu_device_id_unico', deviceId);
       }
+
+      _deviceId = deviceId;
     } catch (e) {
       _deviceId = "Erro ao obter ID";
     }
   }
 
- Future<void> _buscarDenunciasDoMongo() async {
+  Future<void> _buscarDenunciasDoMongo() async {
     setState(() => _isLoading = true);
 
     try {
-      // Aqui nós colocamos o seu link do Render!
-      // Ele vai pegar a URL base e juntar com a rota e o ID do celular
       final String apiUrl = 'https://pp3-8dg0.onrender.com/minhas-denuncias/$_deviceId';
       
       final response = await http.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
-        // Converte a resposta (String) para JSON (Lista)
         final List<dynamic> dadosJson = json.decode(response.body);
         
         setState(() {
-          // Mapeia o JSON para o nosso DenunciaModel
           _denuncias = dadosJson.map((json) => DenunciaModel.fromJson(json)).toList();
           _isLoading = false;
         });
@@ -97,12 +100,12 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             children: [
                Center(
                  child: Padding(
-                               padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
-                               child: SvgPicture.asset(
-                  'assets/logo_green.svg',
-                  height: 40,
-                               ),
-                             ),
+                   padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
+                   child: SvgPicture.asset(
+                     'assets/logo_green.svg',
+                     height: 40,
+                   ),
+                 ),
                ),
               // Cabeçalho da Tela
               Padding(
@@ -157,8 +160,6 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
       ),
     );
   }
-
-  
 
   // Design UI Premium para o Card da Denúncia
   Widget _buildCardDenuncia(DenunciaModel denuncia) {
@@ -273,13 +274,15 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2B5C45).withValues(alpha: 0.06),
-                shape: BoxShape.circle,
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2B5C45).withValues(alpha: 0.06),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.assignment_turned_in_rounded, size: 64, color: Color(0xFF2B5C45)),
               ),
-              child: const Icon(Icons.assignment_turned_in_rounded, size: 64, color: Color(0xFF2B5C45)),
             ),
             const SizedBox(height: 24),
             const Text(
@@ -292,7 +295,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'As manifestações enviadas por este smartphone aparecerão listadas nesta área.',
+              'As manifestações enviadas por este dispositivo aparecerão listadas nesta área.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xFF133626).withValues(alpha: 0.5),

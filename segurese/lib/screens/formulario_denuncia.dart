@@ -5,6 +5,7 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http; 
 import 'package:path/path.dart' as path;
+import 'package:device_info_plus/device_info_plus.dart'; // <-- NOVO: Pacote para pegar o ID do celular
 
 class FormularioDenuncia extends StatefulWidget {
   final String categoria;
@@ -51,6 +52,23 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     _dataController.dispose();
     _horaController.dispose();
     super.dispose();
+  }
+
+  // --- NOVA FUNÇÃO: Pegar o ID único do dispositivo ---
+  Future<String> _getDeviceId() async {
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        return build.id; // ID único no Android
+      } else if (Platform.isIOS) {
+        var build = await deviceInfoPlugin.iosInfo;
+        return build.identifierForVendor ?? "iOS-Desconhecido"; // ID único no iOS
+      }
+    } catch (e) {
+      return "Erro-ID";
+    }
+    return "Desconhecido";
   }
 
   Future<void> _tirarFoto() async {
@@ -298,8 +316,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     );
   }
 
-
-
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 8.0),
@@ -315,7 +331,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
       ),
     );
   }
-
 
   Widget _buildGlassContainer({required Widget child}) {
     return Container(
@@ -341,7 +356,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
       ),
     );
   }
-
 
   Widget _buildCleanTextField({
     required TextEditingController controller,
@@ -380,7 +394,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
       color: _verdeEscuro.withValues(alpha: 0.1),
     );
   }
-
 
   Widget _buildPhotoGallery() {
     return SizedBox(
@@ -424,7 +437,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     );
   }
 
-
   Widget _buildPhotoAction(IconData icon, String label, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
@@ -445,7 +457,6 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
       ),
     );
   }
-
 
   void _enviarDenuncia() async {
 
@@ -480,13 +491,17 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     );
 
     try {
+      // Pega o ID do dispositivo antes de montar a requisição
+      String deviceId = await _getDeviceId();
+
       // Prepare multipart request
-  var request = http.MultipartRequest(
-  'POST',
-  Uri.parse('https://pp3-8dg0.onrender.com/submit-form'),
-);
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pp3-8dg0.onrender.com/submit-form'),
+      );
 
       // Add form fields
+      request.fields['dispositivoId'] = deviceId; // <-- NOVO: Enviando o ID para o MongoDB
       request.fields['categoria'] = widget.categoria;
       request.fields['local'] = _nomeController.text;
       request.fields['data'] = _dataController.text;
@@ -512,7 +527,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Denúncia enviada com sucesso!'),
+              content: Text('Denúncia enviada e salva com sucesso!'),
               backgroundColor: Color(0xFF2B5C45),
             ),
           );

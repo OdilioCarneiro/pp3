@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'formulario_denuncia.dart';
 import 'package:segurese/models/instituicao_model.dart';
+import 'package:segurese/screens/historico_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,11 +16,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final CarouselSliderController _carouselController = CarouselSliderController();
   int _currentTabIndex = 0;
-  
   int _selectedIndex = 0;
   late final List<InstituicaoModel> _instituicoes;
 
-  // 🔥 MAPA DE EMAILS POR CATEGORIA
   final Map<String, String> _emailMapping = {
     'Perigos': 'yslennlaragb@gmail.com',
     'Acidentes': 'saude@ifce.com',
@@ -38,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
-    
+
     _carouselController.animateToPage(
       index,
       duration: const Duration(milliseconds: 400),
@@ -50,73 +49,74 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          _currentTabIndex == 0
+              ? _buildHomeContent()
+              : const HistoricoDenunciasPage(),
+
+          Positioned(
+            bottom: 30,
+            left: 24,
+            right: 24,
+            child: _buildAppleGlassTabBar(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHomeContent() {
     const Color begeColor = Color(0xFFF6F4E8);
     const Color brancoColor = Colors.white;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [begeColor, brancoColor],
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [begeColor, brancoColor],
         ),
-        child: Stack(
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            SafeArea(
-              bottom: false,
-              child: Column(
-                children: [
-                  // 1. Logo
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
-                    child: SvgPicture.asset(
-                      'assets/logo_green.svg',
-                      height: 40,
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: 55,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      itemCount: _instituicoes.length,
-                      itemBuilder: (context, index) {
-                        return _buildInstitutionChip(_instituicoes[index], index);
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  //  Carrossel 
-                  CarouselSlider.builder(
-                    carouselController: _carouselController,
-                    itemCount: _instituicoes.length,
-                    itemBuilder: (context, index, realIndex) {
-                      return _buildTipoDenunciaCard(_instituicoes[index]);
-                    },
-                    options: CarouselOptions(
-                      height: 440,
-                      viewportFraction: 0.68,
-                      enlargeCenterPage: true,
-                      enlargeStrategy: CenterPageEnlargeStrategy.scale,
-                      enableInfiniteScroll: true,
-                      scrollPhysics: const BouncingScrollPhysics(),
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
+              child: SvgPicture.asset(
+                'assets/logo_green.svg',
+                height: 40,
               ),
             ),
-
-            Positioned(
-              bottom: 30,
-              left: 24,
-              right: 24,
-              child: _buildAppleGlassTabBar(),
+            SizedBox(
+              height: 55,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                itemCount: _instituicoes.length,
+                itemBuilder: (context, index) {
+                  return _buildInstitutionChip(_instituicoes[index], index);
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+            CarouselSlider.builder(
+              carouselController: _carouselController,
+              itemCount: _instituicoes.length,
+              itemBuilder: (context, index, realIndex) {
+                return _buildTipoDenunciaCard(_instituicoes[index]);
+              },
+              options: CarouselOptions(
+                height: 440,
+                viewportFraction: 0.68,
+                enlargeCenterPage: true,
+                enlargeStrategy: CenterPageEnlargeStrategy.scale,
+                enableInfiniteScroll: true,
+                scrollPhysics: const BouncingScrollPhysics(),
+              ),
             ),
           ],
         ),
@@ -130,7 +130,9 @@ class _HomePageState extends State<HomePage> {
     return Container(
       margin: const EdgeInsets.only(right: 12, bottom: 8),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF2B5C45) : Colors.white.withValues(alpha: 0.8),
+        color: isActive
+            ? const Color(0xFF2B5C45)
+            : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isActive ? const Color(0xFF2B5C45) : Colors.white,
@@ -138,7 +140,8 @@ class _HomePageState extends State<HomePage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF133626).withValues(alpha: isActive ? 0.25 : 0.05),
+            color: const Color(0xFF133626)
+                .withValues(alpha: isActive ? 0.25 : 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           )
@@ -216,7 +219,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildGlassButton(String label, String categoria) {
-    // 🔥 PEGA EMAIL CORRETO DA CATEGORIA
     final String emailDestino = _emailMapping[categoria] ?? 'default@ifce.com';
 
     return Container(
@@ -254,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => FormularioDenuncia(
                         categoria: categoria,
-                        emailDestino: emailDestino, // 🔥 EMAIL CORRETO POR CATEGORIA
+                        emailDestino: emailDestino,
                       ),
                     ),
                   );
@@ -315,15 +317,18 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2B5C45).withValues(alpha: 0.08),
+                              color: const Color(0xFF2B5C45)
+                                  .withValues(alpha: 0.08),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(data.chipIcon, size: 48, color: const Color(0xFF2B5C45)),
+                            child: Icon(
+                              data.chipIcon,
+                              size: 48,
+                              color: const Color(0xFF2B5C45),
+                            ),
                           ),
                         ),
-                        
                         const SizedBox(height: 24),
-                        
                         Text(
                           data.bioTitle,
                           textAlign: TextAlign.center,
@@ -335,9 +340,7 @@ class _HomePageState extends State<HomePage> {
                             height: 1.2,
                           ),
                         ),
-                        
                         const SizedBox(height: 32),
-                        
                         const Text(
                           'Sobre',
                           style: TextStyle(
@@ -351,15 +354,14 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           data.bioDesc,
                           style: TextStyle(
-                            color: const Color(0xFF133626).withValues(alpha: 0.75),
+                            color: const Color(0xFF133626)
+                                .withValues(alpha: 0.75),
                             fontSize: 16,
                             height: 1.6,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        
                         const SizedBox(height: 32),
-
                         const Text(
                           'Áreas de Atuação',
                           style: TextStyle(
@@ -373,26 +375,34 @@ class _HomePageState extends State<HomePage> {
                         Wrap(
                           spacing: 10,
                           runSpacing: 12,
-                          children: data.atuacao.map((item) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF6F4E8),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: const Color(0xFF2B5C45).withValues(alpha: 0.1)),
-                            ),
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF2B5C45),
-                              ),
-                            ),
-                          )).toList(),
+                          children: data.atuacao
+                              .map(
+                                (item) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF6F4E8),
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: const Color(0xFF2B5C45)
+                                          .withValues(alpha: 0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF2B5C45),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
-
                         const SizedBox(height: 32),
-
                         Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
@@ -404,7 +414,11 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.support_agent_rounded, color: Colors.white, size: 24),
+                                  const Icon(
+                                    Icons.support_agent_rounded,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
                                   const SizedBox(width: 12),
                                   Text(
                                     'CONTATOS OFICIAIS',
@@ -430,7 +444,6 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        
                         const SizedBox(height: 120),
                       ],
                     ),
@@ -473,8 +486,16 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Row(
               children: [
-                _buildTabItem(icon: Icons.admin_panel_settings_rounded, label: 'Home', index: 0),
-                _buildTabItem(icon: Icons.person_rounded, label: 'Minhas denúncias', index: 1),
+                _buildTabItem(
+                  icon: Icons.admin_panel_settings_rounded,
+                  label: 'Home',
+                  index: 0,
+                ),
+                _buildTabItem(
+                  icon: Icons.person_rounded,
+                  label: 'Minhas denúncias',
+                  index: 1,
+                ),
               ],
             ),
           ),
@@ -483,15 +504,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTabItem({required IconData icon, required String label, required int index}) {
+  Widget _buildTabItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
     bool isActive = _currentTabIndex == index;
+
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() => _currentTabIndex = index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           decoration: BoxDecoration(
-            color: isActive ? Colors.black.withValues(alpha: 0.08) : Colors.transparent,
+            color: isActive
+                ? Colors.black.withValues(alpha: 0.08)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Column(

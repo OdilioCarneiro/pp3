@@ -10,12 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  device_info_plus: ^13.1.0
   
   # Rede e Utilidades
   http: ^1.2.0
   path: ^1.9.0
   path_provider: ^2.1.2
   shared_preferences: ^2.2.2
+  intl: ^0.18.1
 
   # Interface e Animação
   dots_indicator: ^3.0.0

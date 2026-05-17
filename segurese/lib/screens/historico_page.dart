@@ -73,11 +73,11 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
   // MÉTODO COMPATÍVEL: Sincroniza as cores dos status perfeitamente com o Painel ADM
   Color _pegarCorStatusOriginal(String status) {
     switch (status.toLowerCase()) {
-      case 'pendente': return const Color(0xFFE11D48); // Vermelho vibrante Apple
-      case 'visualizado': return const Color(0xFF0284C7); // Azul iOS
-      case 'em análise': return const Color(0xFF4F46E5); // Indigo profundo
-      case 'protocolado': return const Color(0xFF0F766E); // Teal fechado
-      case 'concluído': return const Color(0xFF16A34A); // Verde Esmeralda
+      case 'pendente': return const Color(0xFFE11D48); 
+      case 'visualizado': return const Color.fromARGB(255, 255, 162, 0); 
+      case 'em análise': return const Color.fromARGB(255, 212, 232, 0); 
+      case 'protocolado': return const Color(0xFF16A34A); 
+      case 'concluído': return const Color(0xFF0F766E);  
       default: return Colors.grey;
     }
   }
@@ -130,7 +130,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
                     Text(
                       'Histórico seguro e anônimo deste aparelho.',
                       style: TextStyle(
-                        color: verdeEscuro.withOpacity(0.5),
+                        color: verdeEscuro.withValues(alpha: 0.5),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -177,13 +177,13 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: verdeEscuro.withOpacity(0.02), // Sombra super suave do Bento Grid
+            color: verdeEscuro.withValues(alpha: 0.02), // Sombra super suave do Bento Grid
             blurRadius: 20,
             offset: const Offset(0, 8),
           )
         ],
         border: Border.all(
-          color: Colors.black.withOpacity(0.02),
+          color: Colors.black.withValues(alpha: 0.02),
           width: 1,
         ),
       ),
@@ -211,7 +211,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: corStatusSincronizada.withOpacity(0.08),
+                    color: corStatusSincronizada.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8), // Cantos retos sutis estilo Apple
                   ),
                   child: Text(
@@ -234,7 +234,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 fontSize: 14,
                 height: 1.5,
                 fontWeight: FontWeight.w500,
@@ -242,17 +242,17 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             ),
             
             const SizedBox(height: 20),
-            Container(height: 1, color: Colors.black.withOpacity(0.02)), // Divisor sutil transparente
+            Container(height: 1, color: Colors.black.withValues(alpha: 0.02)), // Divisor sutil transparente
             const SizedBox(height: 16),
             
             Row(
               children: [
-                Icon(Icons.calendar_today_rounded, size: 14, color: verdeEscuro.withOpacity(0.3)),
+                Icon(Icons.calendar_today_rounded, size: 14, color: verdeEscuro.withValues(alpha: 0.3)),
                 const SizedBox(width: 6),
                 Text(
                   'Enviado em $dataFormatada',
                   style: TextStyle(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -275,7 +275,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: verdeEscuro.withOpacity(0.05),
+                color: verdeEscuro.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.assignment_turned_in_rounded, size: 64, color: verdeEscuro),
@@ -295,7 +295,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
               'As manifestações enviadas por este dispositivo aparecerão listadas nesta área.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: verdeEscuro.withOpacity(0.4),
+                color: verdeEscuro.withValues(alpha: 0.4),
                 fontSize: 14,
                 height: 1.4,
                 fontWeight: FontWeight.w500,

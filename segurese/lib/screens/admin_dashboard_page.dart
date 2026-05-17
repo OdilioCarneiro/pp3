@@ -114,7 +114,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     width: 40,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -136,7 +136,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: isAtual ? const Color(0xFF133626).withOpacity(0.04) : Colors.transparent,
+                      color: isAtual ? const Color(0xFF133626).withValues(alpha: 0.04) : Colors.transparent,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: ListTile(
@@ -171,11 +171,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Color _pegarCorStatus(String status) {
     switch (status.toLowerCase()) {
-      case 'pendente': return const Color(0xFFE11D48); // Vermelho vibrante Apple
-      case 'visualizado': return const Color(0xFF0284C7); // Azul iOS
-      case 'em análise': return const Color(0xFF4F46E5); // Indigo profundo
-      case 'protocolado': return const Color(0xFF0F766E); // Teal fechado
-      case 'concluído': return const Color(0xFF16A34A); // Verde Esmeralda
+      case 'pendente': return const Color(0xFFE11D48); 
+      case 'visualizado': return const Color.fromARGB(255, 255, 162, 0); 
+      case 'em análise': return const Color.fromARGB(255, 212, 232, 0); 
+      case 'protocolado': return const Color(0xFF16A34A); 
+      case 'concluído': return const Color(0xFF0F766E); 
       default: return Colors.grey;
     }
   }
@@ -204,7 +204,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
             Text(
               'Painel de Controle Institucional',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: verdeEscuro.withOpacity(0.5)),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: verdeEscuro.withValues(alpha: 0.5)),
             ),
           ],
         ),
@@ -269,11 +269,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.space_dashboard_outlined, size: 64, color: verdeEscuro.withOpacity(0.2)),
+                              Icon(Icons.space_dashboard_outlined, size: 64, color: verdeEscuro.withValues(alpha: 0.2)),
                               const SizedBox(height: 16),
                               Text(
                                 'Nenhuma ocorrência registrada.',
-                                style: TextStyle(color: verdeEscuro.withOpacity(0.4), fontSize: 15, fontWeight: FontWeight.w600),
+                                style: TextStyle(color: verdeEscuro.withValues(alpha: 0.4), fontSize: 15, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -299,7 +299,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(color: Colors.black.withOpacity(0.02), width: 1),
+                                  border: Border.all(color: Colors.black.withValues(alpha: 0.02), width: 1),
                                 ),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(24),
@@ -316,7 +316,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                               decoration: BoxDecoration(
-                                                color: corStatus.withOpacity(0.08),
+                                                color: corStatus.withValues(alpha: 0.08),
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
                                               child: Text(
@@ -332,7 +332,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                             Text(
                                               data,
                                               style: TextStyle(
-                                                color: Colors.black.withOpacity(0.3),
+                                                color: Colors.black.withValues(alpha: 0.3),
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700,
                                               ),
@@ -357,13 +357,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                             Expanded(
                                               child: Row(
                                                 children: [
-                                                  Icon(Icons.location_on_rounded, size: 16, color: verdeEscuro.withOpacity(0.3)),
+                                                  Icon(Icons.location_on_rounded, size: 16, color: verdeEscuro.withValues(alpha: 0.3)),
                                                   const SizedBox(width: 6),
                                                   Expanded(
                                                     child: Text(
                                                       local,
                                                       style: TextStyle(
-                                                        color: Colors.black.withOpacity(0.4),
+                                                      color: Colors.black.withValues(alpha: 0.4),
                                                         fontSize: 13,
                                                         fontWeight: FontWeight.w600,
                                                       ),
@@ -376,7 +376,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                             ),
                                             Icon(
                                               Icons.chevron_right_rounded,
-                                              color: Colors.black.withOpacity(0.2),
+                                              color: Colors.black.withValues(alpha: 0.2),
                                               size: 20,
                                             )
                                           ],
@@ -408,7 +408,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
-        border: bgColor == Colors.white ? Border.all(color: Colors.black.withOpacity(0.02)) : null,
+        border: bgColor == Colors.white ? Border.all(color: Colors.black.withValues(alpha: 0.02)) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,13 +420,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 value,
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: textColor, letterSpacing: -1.0),
               ),
-              Icon(icon, size: 20, color: textColor.withOpacity(0.5)),
+              Icon(icon, size: 20, color: textColor.withValues(alpha: 0.5)),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: textColor.withOpacity(0.6)),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: textColor.withValues(alpha: 0.6)),
           ),
         ],
       ),

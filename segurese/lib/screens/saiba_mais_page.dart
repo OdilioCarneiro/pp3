@@ -148,7 +148,7 @@ class SaibaMaisPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -160,7 +160,7 @@ class SaibaMaisPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.08),
+              color: iconColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: iconColor, size: 28),
@@ -208,7 +208,7 @@ class SaibaMaisPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)), // Borda super suave
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)), // Borda super suave
       ),
       child: Row(
         children: [
@@ -216,7 +216,7 @@ class SaibaMaisPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: verdeEscuro.withOpacity(0.05),
+              color: verdeEscuro.withValues(alpha: 0.05),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.person_outline, color: verdeEscuro),

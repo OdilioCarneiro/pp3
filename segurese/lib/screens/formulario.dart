@@ -140,7 +140,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
   Widget _buildGlassContainer({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.white),
       ),
@@ -166,7 +166,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: _verdeEscuro.withOpacity(0.05),
+            color: _verdeEscuro.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

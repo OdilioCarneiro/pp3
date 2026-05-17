@@ -77,7 +77,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   Widget build(BuildContext context) {
     const Color verdeEscuro = Color(0xFF133626);
     // Cor branca translúcida para os inputs estilo "glass"
-    final Color inputBackground = Colors.white.withOpacity(0.08);
+    final Color inputBackground = Colors.white.withValues(alpha: 0.08);
 
     return Scaffold(
       backgroundColor: verdeEscuro,
@@ -101,7 +101,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(16.0)
                   ),
@@ -127,7 +127,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   'Insira suas credenciais de departamento',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 48),
@@ -140,7 +140,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white.withOpacity(0.4),
+                      color: Colors.white.withValues(alpha: 0.4),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -151,7 +151,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   decoration: BoxDecoration(
                     color: inputBackground,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.15)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -184,7 +184,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white.withOpacity(0.4),
+                      color: Colors.white.withValues(alpha: 0.4),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -208,11 +208,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       onPressed: () => setState(() => _senhaVisivel = !_senhaVisivel),
                     ),
                     hintText: '••••••••',
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -230,7 +230,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     onPressed: _isLoading ? null : _fazerLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF6F4E8), // Botão claro contrasta com o fundo escuro
-                      disabledBackgroundColor: const Color(0xFFF6F4E8).withOpacity(0.5),
+                      disabledBackgroundColor: const Color(0xFFF6F4E8).withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,
                     ),

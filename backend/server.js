@@ -7,9 +7,6 @@ const path = require('path');
 const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
 
-// 1. Importando o MongoClient nativo
-const { MongoClient } = require('mongodb');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 

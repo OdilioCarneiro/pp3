@@ -20,11 +20,11 @@ class _HomePageState extends State<HomePage> {
   late final List<InstituicaoModel> _instituicoes;
 
   final Map<String, String> _emailMapping = {
-    'Perigos': 'yslennlaragb@gmail.com',
+    'Perigos': 'yslenlaragb@gmail.com',
     'Acidentes': 'saude@ifce.com',
     'Assédio': 'recursos_humanos@ifce.com',
     'Racismo': 'diversidade@ifce.com',
-    'Homofobia': 'odilio.carneiro63@aluno.ifce.edu.br',
+    'Homofobia': 'odiliocarneiro@gmail.com',
   };
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'formulario_denuncia.dart';
 import 'package:segurese/models/instituicao_model.dart';
 import 'package:segurese/screens/historico_page.dart';
+import 'saiba_mais_page.dart'; // <-- CORREÇÃO 1: Import da página Saiba Mais adicionado!
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -84,11 +85,27 @@ class _HomePageState extends State<HomePage> {
         bottom: false,
         child: Column(
           children: [
+            // <-- CORREÇÃO 2: Adicionada uma Row para alinhar a Logo e o Botão corretamente
             Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
-              child: SvgPicture.asset(
-                'assets/logo_green.svg',
-                height: 40,
+              padding: const EdgeInsets.only(top: 16.0, bottom: 24.0, left: 16.0, right: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(width: 48), // Espaçador invisível para manter a logo no centro
+                  SvgPicture.asset(
+                    'assets/logo_green.svg',
+                    height: 40,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.error_outline_rounded, color: Color(0xFF133626), size: 28),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SaibaMaisPage()),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
             SizedBox(

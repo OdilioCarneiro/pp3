@@ -7,7 +7,9 @@ class DenunciaModel {
   final String descricao;
   final DateTime dataCriacao;
   final String status;
-  final List<String> fotos; 
+  final List<String> fotos;
+  final String dataEnvioManual; 
+  final String horaEnvioManual;
 
   DenunciaModel({
     required this.id,
@@ -16,12 +18,12 @@ class DenunciaModel {
     required this.descricao,
     required this.dataCriacao,
     required this.status,
-    required this.fotos, 
+    required this.fotos,
+    required this.dataEnvioManual, 
+    required this.horaEnvioManual, 
   });
 
- 
   factory DenunciaModel.fromJson(Map<String, dynamic> json) {
-
     var fotosVindasDoBanco = json['fotos'] ?? json['imagens'] ?? [];
     List<String> listaFotosFormatada = List<String>.from(fotosVindasDoBanco);
 
@@ -35,9 +37,10 @@ class DenunciaModel {
           : DateTime.now(),
       status: json['status'] ?? 'Pendente',
       fotos: listaFotosFormatada,
+      dataEnvioManual: json['data'] ?? '', 
+      horaEnvioManual: json['hora'] ?? '',
     );
   }
-
 
   Color get statusColor {
     switch (status.toLowerCase()) {

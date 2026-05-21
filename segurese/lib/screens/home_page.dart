@@ -85,13 +85,13 @@ class _HomePageState extends State<HomePage> {
         bottom: false,
         child: Column(
           children: [
-            // <-- CORREÇÃO 2: Adicionada uma Row para alinhar a Logo e o Botão corretamente
+            
             Padding(
               padding: const EdgeInsets.only(top: 16.0, bottom: 24.0, left: 16.0, right: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 48), // Espaçador invisível para manter a logo no centro
+                  const SizedBox(width: 48), 
                   SvgPicture.asset(
                     'assets/logo_green.svg',
                     height: 40,
@@ -377,47 +377,6 @@ class _HomePageState extends State<HomePage> {
                             height: 1.6,
                             fontWeight: FontWeight.w500,
                           ),
-                        ),
-                        const SizedBox(height: 32),
-                        const Text(
-                          'Áreas de Atuação',
-                          style: TextStyle(
-                            color: Color(0xFF2B5C45),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 12,
-                          children: data.atuacao
-                              .map(
-                                (item) => Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF6F4E8),
-                                    borderRadius: BorderRadius.circular(24),
-                                    border: Border.all(
-                                      color: const Color(0xFF2B5C45)
-                                          .withValues(alpha: 0.1),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF2B5C45),
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
                         ),
                         const SizedBox(height: 32),
                         Container(

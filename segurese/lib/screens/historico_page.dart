@@ -118,7 +118,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
                     Text(
                       'Histórico seguro e anônimo deste aparelho.',
                       style: TextStyle(
-                        color: verdeEscuro.withOpacity(0.5),
+                        color: verdeEscuro.withValues(alpha: 0.5),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -163,7 +163,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: verdeEscuro.withOpacity(0.05),
+                color: verdeEscuro.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.assignment_turned_in_rounded, size: 64, color: verdeEscuro),
@@ -183,7 +183,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
               'As manifestações enviadas por este dispositivo aparecerão listadas nesta área.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: verdeEscuro.withOpacity(0.4),
+                color: verdeEscuro.withValues(alpha: 0.4),
                 fontSize: 14,
                 height: 1.4,
                 fontWeight: FontWeight.w500,
@@ -196,9 +196,6 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
   }
 }
 
-// =========================================================================
-// WIDGET INTERNO: Gerencia a expansão individual de cada card com fotos
-// =========================================================================
 class CardDenunciaWidget extends StatefulWidget {
   final DenunciaModel denuncia;
   final Color verdeEscuro;
@@ -216,11 +213,54 @@ class CardDenunciaWidget extends StatefulWidget {
 class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
   bool _isExpanded = false;
 
+ 
+  void _mostrarImagemGrande(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, 
+      barrierColor: Colors.black.withValues(alpha: 0.9), 
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.zero,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              
+              InteractiveViewer(
+                panEnabled: true,
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                ),
+              ),
+              
+              
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 20,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close_rounded, color: Colors.white, size: 30),
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black.withValues(alpha: 0.4),
+                    shape: const CircleBorder(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String dataFormatada = DateFormat('dd/MM/yyyy • HH:mm').format(widget.denuncia.dataCriacao);
-    
-    // Agora a cor vem diretamente do get sincronizado do seu modelo atualizado
     final Color corStatusSincronizada = widget.denuncia.statusColor;
 
     return AnimatedContainer(
@@ -232,13 +272,13 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: widget.verdeEscuro.withOpacity(0.02),
+            color: widget.verdeEscuro.withValues(alpha: 0.02),
             blurRadius: 20,
             offset: const Offset(0, 8),
           )
         ],
         border: Border.all(
-          color: _isExpanded ? widget.verdeEscuro.withOpacity(0.1) : Colors.black.withOpacity(0.02),
+          color: _isExpanded ? widget.verdeEscuro.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.02),
           width: 1,
         ),
       ),
@@ -254,7 +294,6 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Linha Superior: Título/Categoria e Badge de Status
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -272,7 +311,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: corStatusSincronizada.withOpacity(0.08),
+                      color: corStatusSincronizada.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -290,7 +329,6 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
               
               const SizedBox(height: 16),
               
-              // Bloco Animado de Texto (Expande ou resume em 3 linhas)
               AnimatedSize(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
@@ -300,7 +338,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                   maxLines: _isExpanded ? null : 3, 
                   overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     fontSize: 14,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -308,7 +346,6 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                 ),
               ),
 
-              // Área Dinâmica de Evidências (Fotos vindas da lista do modelo)
               if (_isExpanded) ...[
                 const SizedBox(height: 20),
                 Text(
@@ -316,7 +353,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: widget.verdeEscuro.withOpacity(0.4),
+                    color: widget.verdeEscuro.withValues(alpha: 0.4),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -329,7 +366,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                           'Nenhuma foto anexada a este registro.',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.black.withOpacity(0.35),
+                            color: Colors.black.withValues(alpha: 0.35),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -342,38 +379,43 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                           itemCount: widget.denuncia.fotos.length, 
                           itemBuilder: (context, index) {
                             final fotoUrl = widget.denuncia.fotos[index];
-                            return Container(
-                              width: 160,
-                              margin: const EdgeInsets.only(right: 12),
-                              decoration: BoxDecoration(
-                                color: widget.verdeEscuro.withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.black.withOpacity(0.03)),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  fotoUrl,
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded /
-                                                loadingProgress.expectedTotalBytes!
-                                            : null,
-                                        color: widget.verdeEscuro,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(
-                                      Icons.broken_image_outlined, 
-                                      color: widget.verdeEscuro.withOpacity(0.2),
-                                      size: 32,
-                                    );
-                                  },
+                            
+                            
+                            return GestureDetector(
+                              onTap: () => _mostrarImagemGrande(context, fotoUrl),
+                              child: Container(
+                                width: 160,
+                                margin: const EdgeInsets.only(right: 12),
+                                decoration: BoxDecoration(
+                                  color: widget.verdeEscuro.withValues(alpha: 0.04),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.black.withValues(alpha: 0.03)),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    fotoUrl,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded /
+                                                  loadingProgress.expectedTotalBytes!
+                                              : null,
+                                          color: widget.verdeEscuro,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.broken_image_outlined, 
+                                        color: widget.verdeEscuro.withValues(alpha: 0.2),
+                                        size: 32,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             );
@@ -383,21 +425,22 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
               ],
               
               const SizedBox(height: 20),
-              Container(height: 1, color: Colors.black.withOpacity(0.02)),
+              Container(height: 1, color: Colors.black.withValues(alpha: 0.02)),
               const SizedBox(height: 16),
               
-              // Rodapé: Data de Envio e Ícone Indicador de Direção (Seta)
-              Row(
+             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.calendar_today_rounded, size: 14, color: widget.verdeEscuro.withOpacity(0.3)),
+                      Icon(Icons.calendar_today_rounded, size: 14, color: widget.verdeEscuro.withValues(alpha: 0.3)),
                       const SizedBox(width: 6),
                       Text(
-                        'Enviado em $dataFormatada',
+                        widget.denuncia.dataEnvioManual.isNotEmpty && widget.denuncia.horaEnvioManual.isNotEmpty
+                            ? 'Enviado em ${widget.denuncia.dataEnvioManual} • ${widget.denuncia.horaEnvioManual}'
+                            : 'Enviado em ${DateFormat('dd/MM/yyyy • HH:mm').format(widget.denuncia.dataCriacao.toLocal())}',
                         style: TextStyle(
-                          color: Colors.black.withOpacity(0.4),
+                          color: Colors.black.withValues(alpha: 0.4),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -406,7 +449,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                   ),
                   Icon(
                     _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                    color: widget.verdeEscuro.withOpacity(0.4),
+                    color: widget.verdeEscuro.withValues(alpha: 0.4),
                     size: 20,
                   ),
                 ],

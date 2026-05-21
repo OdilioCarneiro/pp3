@@ -70,18 +70,6 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
     }
   }
 
-  // MÉTODO COMPATÍVEL: Sincroniza as cores dos status perfeitamente com o Painel ADM
-  Color _pegarCorStatusOriginal(String status) {
-    switch (status.toLowerCase()) {
-      case 'pendente': return const Color(0xFFE11D48); 
-      case 'visualizado': return const Color.fromARGB(255, 255, 162, 0); 
-      case 'em análise': return const Color.fromARGB(255, 212, 232, 0); 
-      case 'protocolado': return const Color(0xFF16A34A); 
-      case 'concluído': return const Color(0xFF0F766E);  
-      default: return Colors.grey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     const Color begeColor = Color(0xFFF6F4E8);
@@ -123,14 +111,14 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
                         color: verdeEscuro,
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: -1.0, // Alinhado ao estilo iOS do Admin
+                        letterSpacing: -1.0,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Histórico seguro e anônimo deste aparelho.',
                       style: TextStyle(
-                        color: verdeEscuro.withValues(alpha: 0.5),
+                        color: verdeEscuro.withOpacity(0.5),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -143,9 +131,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
 
               Expanded(
                 child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(color: verdeEscuro),
-                      )
+                    ? const Center(child: CircularProgressIndicator(color: verdeEscuro))
                     : _denuncias.isEmpty
                         ? _buildEstadoVazio(verdeEscuro)
                         : ListView.builder(
@@ -153,113 +139,15 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
                             physics: const BouncingScrollPhysics(),
                             itemCount: _denuncias.length,
                             itemBuilder: (context, index) {
-                              return _buildCardDenuncia(_denuncias[index], verdeEscuro);
+                              return CardDenunciaWidget(
+                                denuncia: _denuncias[index],
+                                verdeEscuro: verdeEscuro,
+                              );
                             },
                           ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCardDenuncia(DenunciaModel denuncia, Color verdeEscuro) {
-    final String dataFormatada = DateFormat('dd/MM/yyyy • HH:mm').format(denuncia.dataCriacao);
-    
-    // Mapeia o status de forma idêntica à página de administração
-    final Color corStatusSincronizada = _pegarCorStatusOriginal(denuncia.status);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: verdeEscuro.withValues(alpha: 0.02), // Sombra super suave do Bento Grid
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          )
-        ],
-        border: Border.all(
-          color: Colors.black.withValues(alpha: 0.02),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24), // Ajustado para 24 para dar mais respiro à leitura
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    denuncia.categoria,
-                    style: TextStyle(
-                      color: verdeEscuro,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                ),
-                
-                // Badge de Status Alinhado com o Design System do Admin (Pill iOS 17)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: corStatusSincronizada.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(8), // Cantos retos sutis estilo Apple
-                  ),
-                  child: Text(
-                    denuncia.status.toUpperCase(),
-                    style: TextStyle(
-                      color: corStatusSincronizada,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: 16),
-            
-            Text(
-              denuncia.descricao,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.black.withValues(alpha: 0.7),
-                fontSize: 14,
-                height: 1.5,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            
-            const SizedBox(height: 20),
-            Container(height: 1, color: Colors.black.withValues(alpha: 0.02)), // Divisor sutil transparente
-            const SizedBox(height: 16),
-            
-            Row(
-              children: [
-                Icon(Icons.calendar_today_rounded, size: 14, color: verdeEscuro.withValues(alpha: 0.3)),
-                const SizedBox(width: 6),
-                Text(
-                  'Enviado em $dataFormatada',
-                  style: TextStyle(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );
@@ -275,7 +163,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: verdeEscuro.withValues(alpha: 0.05),
+                color: verdeEscuro.withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.assignment_turned_in_rounded, size: 64, color: verdeEscuro),
@@ -295,13 +183,236 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
               'As manifestações enviadas por este dispositivo aparecerão listadas nesta área.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: verdeEscuro.withValues(alpha: 0.4),
+                color: verdeEscuro.withOpacity(0.4),
                 fontSize: 14,
                 height: 1.4,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// =========================================================================
+// WIDGET INTERNO: Gerencia a expansão individual de cada card com fotos
+// =========================================================================
+class CardDenunciaWidget extends StatefulWidget {
+  final DenunciaModel denuncia;
+  final Color verdeEscuro;
+
+  const CardDenunciaWidget({
+    super.key,
+    required this.denuncia,
+    required this.verdeEscuro,
+  });
+
+  @override
+  State<CardDenunciaWidget> createState() => _CardDenunciaWidgetState();
+}
+
+class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final String dataFormatada = DateFormat('dd/MM/yyyy • HH:mm').format(widget.denuncia.dataCriacao);
+    
+    // Agora a cor vem diretamente do get sincronizado do seu modelo atualizado
+    final Color corStatusSincronizada = widget.denuncia.statusColor;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: widget.verdeEscuro.withOpacity(0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          )
+        ],
+        border: Border.all(
+          color: _isExpanded ? widget.verdeEscuro.withOpacity(0.1) : Colors.black.withOpacity(0.02),
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: () {
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Linha Superior: Título/Categoria e Badge de Status
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.denuncia.categoria,
+                      style: TextStyle(
+                        color: widget.verdeEscuro,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: corStatusSincronizada.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      widget.denuncia.status.toUpperCase(),
+                      style: TextStyle(
+                        color: corStatusSincronizada,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Bloco Animado de Texto (Expande ou resume em 3 linhas)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                alignment: Alignment.topCenter,
+                child: Text(
+                  widget.denuncia.descricao,
+                  maxLines: _isExpanded ? null : 3, 
+                  overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.7),
+                    fontSize: 14,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              // Área Dinâmica de Evidências (Fotos vindas da lista do modelo)
+              if (_isExpanded) ...[
+                const SizedBox(height: 20),
+                Text(
+                  'EVIDÊNCIAS ANEXADAS',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: widget.verdeEscuro.withOpacity(0.4),
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                
+                widget.denuncia.fotos.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'Nenhuma foto anexada a este registro.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black.withOpacity(0.35),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        height: 120,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: widget.denuncia.fotos.length, 
+                          itemBuilder: (context, index) {
+                            final fotoUrl = widget.denuncia.fotos[index];
+                            return Container(
+                              width: 160,
+                              margin: const EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                color: widget.verdeEscuro.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.black.withOpacity(0.03)),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Image.network(
+                                  fotoUrl,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        color: widget.verdeEscuro,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.broken_image_outlined, 
+                                      color: widget.verdeEscuro.withOpacity(0.2),
+                                      size: 32,
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+              ],
+              
+              const SizedBox(height: 20),
+              Container(height: 1, color: Colors.black.withOpacity(0.02)),
+              const SizedBox(height: 16),
+              
+              // Rodapé: Data de Envio e Ícone Indicador de Direção (Seta)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today_rounded, size: 14, color: widget.verdeEscuro.withOpacity(0.3)),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Enviado em $dataFormatada',
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.4),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                    color: widget.verdeEscuro.withOpacity(0.4),
+                    size: 20,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

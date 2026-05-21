@@ -6,7 +6,8 @@ class DenunciaModel {
   final String categoria;
   final String descricao;
   final DateTime dataCriacao;
-  final String status; // 'Pendente', 'Em Análise', 'Resolvido'
+  final String status;
+  final List<String> fotos; 
 
   DenunciaModel({
     required this.id,
@@ -15,10 +16,15 @@ class DenunciaModel {
     required this.descricao,
     required this.dataCriacao,
     required this.status,
+    required this.fotos, 
   });
 
-  // Mapeia o JSON vindo da sua API / MongoDB
+ 
   factory DenunciaModel.fromJson(Map<String, dynamic> json) {
+
+    var fotosVindasDoBanco = json['fotos'] ?? json['imagens'] ?? [];
+    List<String> listaFotosFormatada = List<String>.from(fotosVindasDoBanco);
+
     return DenunciaModel(
       id: json['_id'] ?? '',
       dispositivoId: json['dispositivoId'] ?? '',
@@ -28,20 +34,20 @@ class DenunciaModel {
           ? DateTime.parse(json['dataCriacao']) 
           : DateTime.now(),
       status: json['status'] ?? 'Pendente',
+      fotos: listaFotosFormatada,
     );
   }
 
-  // Cores de status dinâmicas para o design UX
+
   Color get statusColor {
     switch (status.toLowerCase()) {
-      case 'em análise':
-      case 'analise':
-        return const Color(0xFFE6A23C); // Laranja moderado
-      case 'resolvido':
-      case 'concluído':
-        return const Color(0xFF2B5C45); // Seu verde padrão
+      case 'pendente': return const Color(0xFFE11D48); 
+      case 'visualizado': return const Color.fromARGB(255, 255, 162, 0); 
+      case 'em análise': return const Color.fromARGB(255, 212, 232, 0); 
+      case 'protocolado': return const Color(0xFF16A34A); 
+      case 'concluído': return const Color(0xFF0F766E); 
       default:
-        return const Color(0xFF909399); // Cinza para pendente
+        return const Color(0xFF909399); 
     }
   }
 }

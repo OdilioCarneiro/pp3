@@ -346,6 +346,45 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                 ),
               ),
 
+              if (!_isExpanded && widget.denuncia.fotos.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                GestureDetector(
+                  onTap: () => _mostrarImagemGrande(context, widget.denuncia.fotos.first),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      widget.denuncia.fotos.first,
+                      height: 110,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                            color: widget.verdeEscuro,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 110,
+                          color: widget.verdeEscuro.withValues(alpha: 0.08),
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: widget.verdeEscuro.withValues(alpha: 0.3),
+                            size: 32,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+
               if (_isExpanded) ...[
                 const SizedBox(height: 20),
                 Text(

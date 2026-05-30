@@ -13,10 +13,13 @@ This is the backend API for the Segurese Flutter app, responsible for sending fo
    - Set your SMTP host, port, user, and password.
    - For Gmail, use app password.
 
-3. Set environment variables (optional):
+3. Set environment variables (required for production):
    ```
-   EMAIL_USER=your-email@gmail.com
-   EMAIL_PASS=your-app-password
+   SENDGRID_API_KEY=your-sendgrid-api-key
+   MONGODB_URI=your-mongodb-connection-string
+   CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+   CLOUDINARY_API_KEY=your-cloudinary-api-key
+   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
    ```
 
 4. Run the server:

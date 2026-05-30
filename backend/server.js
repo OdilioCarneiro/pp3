@@ -6,6 +6,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const sgMail = require('@sendgrid/mail');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,13 @@ if (!fs.existsSync('uploads')) { fs.mkdirSync('uploads'); }
 
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const fromEmail = 'ppprojeto3@gmail.com'; 
 
 const departmentEmails = {
@@ -77,8 +85,31 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
   })) : [];
 
   
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
-  const fotosUrls = attachments ? attachments.map(file => `${baseUrl}/uploads/${file.filename}`) : [];
+  let fotosUrls = [];
+
+  if (attachments && attachments.length > 0) {
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+      const uploadResults = await Promise.all(
+        attachments.map(file =>
+          cloudinary.uploader.upload(file.path, {
+            folder: 'segurese_denuncias',
+            resource_type: 'image',
+          }),
+        ),
+      );
+
+      fotosUrls = uploadResults.map(result => result.secure_url);
+
+      attachments.forEach(file => {
+        fs.unlink(file.path, err => {
+          if (err) console.warn('Falha ao remover arquivo temporário:', err);
+        });
+      });
+    } else {
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      fotosUrls = attachments.map(file => `${baseUrl}/uploads/${file.filename}`);
+    }
+  }
 
   const msg = {
     to: recipientEmail,

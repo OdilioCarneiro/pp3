@@ -61,7 +61,7 @@ class InstituicaoModel {
       InstituicaoModel(
         chipTitle: 'NAPNE',
         chipIcon: Icons.accessible_forward_rounded,
-        cardTitle: 'Homofobia', // Adaptável conforme sua lógica de denúncia
+        cardTitle: 'Homofobia', // Mantém o cartão Homofobia no filtro
         bioTitle: 'Núcleo de Acessibilidade (NAPNE)',
         bioDesc: 'Objetiva criar uma cultura de educação para a convivência, quebrando barreiras arquitetônicas, comunicacionais e atitudinais (preconceitos) para estudantes com necessidades específicas.',
         bioContact: 'Coord.: João César Abreu\nE-mail: napne.fortaleza@ifce.edu.br\nTel: (85) 3455-3070',

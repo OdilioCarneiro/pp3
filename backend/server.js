@@ -69,6 +69,9 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
   const { dispositivoId, categoria, local, data, hora, descricao, emailDestino } = req.body;
   const attachments = req.files;
 
+  console.log('DEBUG: submit-form req.body ->', req.body);
+  console.log('DEBUG: submit-form attachments count ->', attachments ? attachments.length : 0);
+
   const recipientEmail = emailDestino || departmentEmails[categoria] || 'default@departamento.com';
 
   let emailBody = `Formulário de Denúncia\n\nCATEGORIA: ${categoria}\n`;
@@ -133,10 +136,12 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
         hora,
         descricao,
         status: 'Pendente',
-        fotos: fotosUrls, 
-        dataCriacao: new Date() 
+        fotos: fotosUrls,
+        dataCriacao: new Date()
       };
-      
+
+      console.log('DEBUG: fotosUrls a salvar no MongoDB ->', fotosUrls);
+
       await db.collection('denuncias').insertOne(novaDenuncia);
       console.log('Denúncia salva no MongoDB com os links das fotos!');
     } else {

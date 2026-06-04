@@ -4,7 +4,8 @@
   "description": "Backend API for Segurese app to send form submissions via email",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate:cloudinary": "node migrate_uploads_to_cloudinary.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

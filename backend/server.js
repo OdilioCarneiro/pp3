@@ -9,6 +9,13 @@ const sgMail = require('@sendgrid/mail');
 const cloudinary = require('cloudinary').v2;
 
 const app = express();
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
@@ -92,22 +99,28 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
 
   if (attachments && attachments.length > 0) {
     if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-      const uploadResults = await Promise.all(
-        attachments.map(file =>
-          cloudinary.uploader.upload(file.path, {
-            folder: 'segurese_denuncias',
-            resource_type: 'image',
-          }),
-        ),
-      );
+      try {
+        const uploadResults = await Promise.all(
+          attachments.map(file =>
+            cloudinary.uploader.upload(file.path, {
+              folder: 'segurese_denuncias',
+              resource_type: 'image',
+            }),
+          ),
+        );
 
-      fotosUrls = uploadResults.map(result => result.secure_url);
+        fotosUrls = uploadResults.map(result => result.secure_url);
 
-      attachments.forEach(file => {
-        fs.unlink(file.path, err => {
-          if (err) console.warn('Falha ao remover arquivo temporário:', err);
+        attachments.forEach(file => {
+          fs.unlink(file.path, err => {
+            if (err) console.warn('Falha ao remover arquivo temporário:', err);
+          });
         });
-      });
+      } catch (err) {
+        console.warn('Cloudinary upload failed, falling back to local uploads. Error:', err.message || err);
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        fotosUrls = attachments.map(file => `${baseUrl}/uploads/${file.filename}`);
+      }
     } else {
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       fotosUrls = attachments.map(file => `${baseUrl}/uploads/${file.filename}`);
@@ -124,8 +137,12 @@ app.post('/submit-form', upload.array('attachments'), async (req, res) => {
 
   try {
 
-    await sgMail.send(msg);
-    console.log('E-mail enviado com sucesso via API!');
+    try {
+      await sgMail.send(msg);
+      console.log('E-mail enviado com sucesso via API!');
+    } catch (emailErr) {
+      console.warn('Aviso: falha ao enviar e-mail via SendGrid, continuando. Erro:', emailErr && emailErr.message ? emailErr.message : emailErr);
+    }
 
     if (db) {
       const novaDenuncia = {

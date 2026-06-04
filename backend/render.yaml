@@ -12,3 +12,13 @@ services:
         generateValue: true
       - key: EMAIL_PASS
         generateValue: true
+      - key: SENDGRID_API_KEY
+        value: ""
+      - key: MONGODB_URI
+        value: ""
+      - key: CLOUDINARY_CLOUD_NAME
+        value: ""
+      - key: CLOUDINARY_API_KEY
+        value: ""
+      - key: CLOUDINARY_API_SECRET
+        value: ""

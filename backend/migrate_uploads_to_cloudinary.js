@@ -17,15 +17,16 @@ if (!MONGO) {
 }
 
 const client = new MongoClient(MONGO);
+const DB_NAME = 'segurese_db';
 
 async function main() {
   try {
     await client.connect();
-    const db = client.db();
+    const db = client.db(DB_NAME);
     const collection = db.collection('denuncias');
 
     const cursor = collection.find({ fotos: { $exists: true, $ne: [] } });
-    console.log('Scanning documents for non-http fotos...');
+    console.log('Scanning documents for fotos to migrate (non-http or local server URLs)...');
 
     while (await cursor.hasNext()) {
       const doc = await cursor.next();
@@ -34,9 +35,19 @@ async function main() {
 
       for (let i = 0; i < fotos.length; i++) {
         const foto = fotos[i];
-        if (typeof foto === 'string' && !foto.startsWith('http')) {
-          // try find file in uploads by basename
-          const base = path.basename(foto);
+        // Cases to migrate:
+        // 1) relative/local path (doesn't start with http)
+        // 2) local server URL containing '/uploads/' (e.g. http://localhost:3000/uploads/filename.png)
+        let base = null;
+        if (typeof foto === 'string') {
+          if (!foto.startsWith('http')) {
+            base = path.basename(foto);
+          } else if (foto.includes('/uploads/')) {
+            base = path.basename(foto);
+          }
+        }
+
+        if (base) {
           const localPath = path.join(__dirname, 'uploads', base);
           if (fs.existsSync(localPath)) {
             console.log(`Uploading ${localPath} to Cloudinary...`);
@@ -50,7 +61,7 @@ async function main() {
               console.warn('Cloudinary upload failed for', localPath, err.message);
             }
           } else {
-            console.log(`Local file not found for foto '${foto}', skipping.`);
+            console.log(`Local file not found for foto '${foto}', looked for ${localPath}, skipping.`);
           }
         }
       }

@@ -24,7 +24,6 @@ class _HomePageState extends State<HomePage> {
     'Perigos': 'yslenlaragb@gmail.com',
     'Acidentes': 'saude@ifce.com',
     'Assédio': 'recursos_humanos@ifce.com',
-    'Racismo': 'diversidade@ifce.com',
     'Homofobia': 'odiliocarneiro@gmail.com',
   };
 
@@ -197,7 +196,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTipoDenunciaCard(InstituicaoModel data) {
+Widget _buildTipoDenunciaCard(InstituicaoModel data) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -211,26 +210,45 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      child: Stack(
-        children: [
-          Center(
-            child: Text(
-              data.cardTitle,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2,
+      // Usamos ClipRRect para garantir que o SVG não vaze pelas bordas arredondadas do card
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: Stack(
+          children: [
+            // 1ª Camada: O SVG preenchendo todo o fundo
+            Positioned.fill(
+              child: SvgPicture.asset(
+                data.imagePath,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          Positioned(
-            bottom: 24,
-            left: 20,
-            right: 20,
-            child: _buildGlassButton('Denuncie já', data.cardTitle),
-          ),
-        ],
+            
+            // 2ª Camada: Película escura (Overlay) para destacar o texto e botão
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.1),
+                      Colors.black.withValues(alpha: 0.6),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            
+            
+            // 4ª Camada: Botão Glass
+            Positioned(
+              bottom: 24,
+              left: 20,
+              right: 20,
+              child: _buildGlassButton('Denuncie já', data.cardTitle),
+            ),
+          ],
+        ),
       ),
     );
   }

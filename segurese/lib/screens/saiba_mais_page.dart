@@ -47,14 +47,14 @@ class SaibaMaisPage extends StatelessWidget {
               // Seção de Cards Informativos (Acolhimento removido)
               _buildInfoCard(
                 icon: Icons.shield_outlined,
-                title: 'Sigilo Absoluto',
+                title: 'Sigilo absoluto',
                 description: 'Sua identidade é rigorosamente protegida. Nenhuma informação pessoal é compartilhada sem sua permissão.',
                 iconColor: verdeEscuro,
               ),
               const SizedBox(height: 16),
               _buildInfoCard(
                 icon: Icons.gavel_outlined,
-                title: 'Ação Imediata',
+                title: 'Ação garantida',
                 description: 'Cada relato é analisado com seriedade pelos departamentos responsáveis para que as providências sejam tomadas.',
                 iconColor: verdeEscuro,
               ),

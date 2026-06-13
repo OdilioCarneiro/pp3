@@ -37,8 +37,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           'senha': _senhaController.text.trim(),
         }),
       );
-
-      // Prints para depuração no console
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
@@ -76,19 +74,17 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   @override
   Widget build(BuildContext context) {
     const Color verdeEscuro = Color(0xFF133626);
-    // Cor branca translúcida para os inputs estilo "glass"
     final Color inputBackground = Colors.white.withValues(alpha: 0.08);
 
     return Scaffold(
       backgroundColor: verdeEscuro,
-      // AppBar invisível apenas para dar o botão de voltar elegante
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white70),
       ),
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(), // Fecha o teclado ao clicar fora
+        onTap: () => FocusScope.of(context).unfocus(), 
         child: Center(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -96,8 +92,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // LOGO APP (Substitua pelo seu widget de imagem se tiver arquivo físico)
-                // Ex: Image.asset('assets/logo.png', height: 100)
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -132,7 +126,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 ),
                 const SizedBox(height: 48),
 
-                // CAMPO 1: SELEÇÃO DE CATEGORIA (Dropdown Customizado)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -157,7 +150,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     child: DropdownButton<String>(
                       value: _categoriaSelecionada,
                       isExpanded: true,
-                      dropdownColor: verdeEscuro, // Fundo do menu aberto também verde
+                      dropdownColor: verdeEscuro,
                       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white70),
                       style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
                       items: _categorias.map((String value) {
@@ -176,7 +169,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // CAMPO 2: SENHA
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -222,14 +214,13 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 ),
                 const SizedBox(height: 40),
 
-                // BOTÃO DE ENTRAR PREMIUM
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _fazerLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF6F4E8), // Botão claro contrasta com o fundo escuro
+                      backgroundColor: const Color(0xFFF6F4E8), 
                       disabledBackgroundColor: const Color(0xFFF6F4E8).withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,

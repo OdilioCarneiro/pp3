@@ -92,7 +92,7 @@ class _HistoricoDenunciasPageState extends State<HistoricoDenunciasPage> {
             children: [
                Center(
                  child: Padding(
-                   padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
+                   padding: const EdgeInsets.only(top: 20.0, bottom: 24.0),
                    child: SvgPicture.asset(
                      'assets/logo_green.svg',
                      height: 40,
@@ -352,7 +352,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                   onTap: () => _mostrarImagemGrande(context, widget.denuncia.fotos.first),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
+                    /*child: Image.network(
                       widget.denuncia.fotos.first,
                       height: 110,
                       width: double.infinity,
@@ -380,7 +380,7 @@ class _CardDenunciaWidgetState extends State<CardDenunciaWidget> {
                           ),
                         );
                       },
-                    ),
+                    ),*/
                   ),
                 ),
               ],

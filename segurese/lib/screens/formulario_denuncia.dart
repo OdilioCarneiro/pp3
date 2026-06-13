@@ -54,7 +54,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
     super.dispose();
   }
 
-  // --- NOVA FUNÇÃO: Pegar o ID único do dispositivo ---
+  //Pegar o ID único do dispositivo
  Future<String> _getDeviceId() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -380,7 +380,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
           hintText: hint,
           hintStyle: TextStyle(color: _verdeEscuro.withValues(alpha: 0.4), fontSize: 15),
           prefixIcon: icon != null ? Icon(icon, color: _verdeMedio.withValues(alpha: 0.7), size: 22) : null,
-          border: InputBorder.none, // O segredo da limpeza visual
+          border: InputBorder.none, 
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           errorStyle: const TextStyle(height: 0.5),
         ),
@@ -532,7 +532,7 @@ class _FormularioDenunciaState extends State<FormularioDenuncia> {
               backgroundColor: Color(0xFF2B5C45),
             ),
           );
-          // Optionally, navigate back or clear form
+
           Navigator.of(context).pop();
         }
       } else {

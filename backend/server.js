@@ -53,11 +53,10 @@ cloudinary.config({
 const fromEmail = 'ppprojeto3@gmail.com'; 
 
 const departmentEmails = {
-  'Perigos': 'yslenlaragb@gmail.com',
-  'Acidentes': 'yslenlaragb@gmail.com',
-  'Assédio': 'yslenlaragb@gmail.com',
-  'Racismo': 'yslenlaragb@gmail.com',
-  'Homofobia': 'odiliocarneiro@gmail.com',
+  'Perigos': 'odilio.carneiro63@aluno.ifce.edu.br',
+  'Acidentes': 'odilio.carneiro63@aluno.ifce.edu.br',
+  'Assédio': 'odilio.carneiro63@aluno.ifce.edu.br',
+  'preconceito': 'odilio.carneiro63@aluno.ifce.edu.br',
 };
 
 app.get('/', (req, res) => {

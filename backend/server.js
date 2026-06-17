@@ -54,7 +54,7 @@ const fromEmail = 'ppprojeto3@gmail.com';
 
 const departmentEmails = {
   'Perigos': 'odilio.carneiro63@aluno.ifce.edu.br',
-  'Acidentes': 'odilio.carneiro63@aluno.ifce.edu.br',
+  'Acidentes': 'odiliocarneiro@gmail.com',
   'Assédio': 'odilio.carneiro63@aluno.ifce.edu.br',
   'preconceito': 'odilio.carneiro63@aluno.ifce.edu.br',
 };

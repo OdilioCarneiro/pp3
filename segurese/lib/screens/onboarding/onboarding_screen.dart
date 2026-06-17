@@ -21,8 +21,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingModel> _pages = [
     OnboardingModel(
       imagePath: 'assets/onboarding_1.svg',
-      title: 'Track your work and get the result',
-      description: 'Remember to keep track of your professional accomplishments.',
+      title: 'Bem-vindo ao Segurese',
+      description: 'Sua plataforma de denúncias anônimas para um IFCE mais seguro.',
     ),
     OnboardingModel(
       imagePath: 'assets/onboarding_2.svg',

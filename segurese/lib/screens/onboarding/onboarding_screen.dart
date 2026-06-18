@@ -27,7 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingModel(
       imagePath: 'assets/onboarding_2.svg',
       title: 'Denuncie assédio e preconceito no campus',
-      description: 'Proteja-se e ajude a construir um IFCE mais seguro e inclusivo.',
+      description: 'Proteja-se e ajude a construir um IFCE mais protegido e inclusivo.',
     ),
     OnboardingModel(
       imagePath: 'assets/onboarding_3.svg', // Imagem da última página
